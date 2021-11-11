@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import Input from '../components/Input';
 import { createUser } from '../services/userAPI';
 
 class Login extends Component {
@@ -53,26 +54,22 @@ class Login extends Component {
     }
     return (
       <div data-testid="page-login">
-        <label htmlFor="login-name-input">
-          Nome
-          <input
-            name="login-name-input"
-            id="login-name-input"
-            type="text"
-            data-testid="login-name-input"
-            placeholder="Insira seu nome"
-            onChange={ this.handleInputChange }
-          />
-          <button
-            type="button"
-            data-testid="login-submit-button"
-            disabled={ submitButtonDisable }
-            onClick={ this.handleBtnClick }
-          >
-            Entrar
+        <Input
+          id="login-name-input"
+          handleChange={ this.handleInputChange }
+          type="text"
+          placeholder="Insira seu nome"
+          label="Nome"
+        />
+        <button
+          type="button"
+          data-testid="login-submit-button"
+          disabled={ submitButtonDisable }
+          onClick={ this.handleBtnClick }
+        >
+          Entrar
 
-          </button>
-        </label>
+        </button>
       </div>
     );
   }
