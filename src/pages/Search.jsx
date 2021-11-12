@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
-import Input from '../components/Input';
+import searchAlbumsAPIs from '../services/searchAlbumsAPI';
 
 class Search extends Component {
   constructor() {
@@ -8,6 +9,8 @@ class Search extends Component {
     this.state = {
       searchInput: '',
       disabled: true,
+      loading: false,
+      result: null,
     };
   }
 
@@ -31,26 +34,77 @@ class Search extends Component {
     }
   }
 
+  requestAPI = async () => {
+    const { searchInput } = this.state;
+    this.setState({
+      loading: true,
+    }, async () => {
+      const data = await searchAlbumsAPIs(searchInput);
+      this.setState({
+        loading: false,
+        result: data,
+      });
+    });
+    const data = await searchAlbumsAPIs(searchInput);
+    return data;
+  }
+
+  renderResultData = () => {
+
+  }
+
   render() {
-    const { disabled } = this.state;
+    const { disabled, loading, result, searchInput } = this.state;
     return (
       <>
         <Header />
         <div data-testid="page-search">
-          <input
-            type="text"
-            onChange={ this.handleChange }
-            data-testid="search-artist-input"
-            placeholder="Nome do Artista"
-          />
-          <button
-            data-testid="search-artist-button"
-            disabled={ disabled }
-            type="button"
-          >
-            Pesquisar
+          {loading ? <p>Carregando...</p> : (
+            <>
+              <input
+                type="text"
+                onChange={ this.handleChange }
+                data-testid="search-artist-input"
+                placeholder="Nome do Artista"
+              />
+              <button
+                data-testid="search-artist-button"
+                disabled={ disabled }
+                type="button"
+                onClick={ this.requestAPI }
+              >
+                Pesquisar
 
-          </button>
+              </button>
+            </>
+          )}
+          {(!result) ? '' : (
+            <>
+
+              {!result.length ? <h1>Nenhum álbum foi encontrado</h1> : (
+                <h1>{`Resultado de álbuns de: ${searchInput}`}</h1>
+              )}
+
+              {result.map((
+                { artistName, artworkUrl100, collectionName, collectionId },
+              ) => (
+
+                <div key={ collectionName }>
+                  <img src={ artworkUrl100 } alt={ `Album ${collectionName}` } />
+                  <p>{collectionName}</p>
+                  <h4>{artistName}</h4>
+                  <Link
+                    data-testid={ `link-to-album-${collectionId}` }
+                    to={ `/album/${collectionId}` }
+                  >
+                    Detalhes
+                  </Link>
+                </div>
+
+              ))}
+
+            </>
+          )}
         </div>
       </>
     );
