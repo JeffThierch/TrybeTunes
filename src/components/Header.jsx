@@ -40,7 +40,7 @@ export default class Header extends Component {
           <Link to="/favorites" data-testid="link-to-favorites">Favorites</Link>
           <Link to="/profile" data-testid="link-to-profile">Profile</Link>
         </nav>
-        <p data-testid="header-user-name">{userName}</p>
+        <h1 data-testid="header-user-name">{userName}</h1>
       </header>
     );
   }
