@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../components/MusicCard';
-import { addSong, removeSong } from '../services/favoriteSongsAPI';
+import { addSong, removeSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class Album extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.handleChange = this.handleChange.bind(this);
 
@@ -21,20 +21,21 @@ class Album extends Component {
 
   componentDidMount() {
     this.fetchMusic();
+    this.renderFavoritesSongs();
   }
 
   async handleChange(music) {
     const { favMusics } = this.state;
     let favArray = [...favMusics];
-    const haveId = favArray.some((id) => id === music.trackId);
+    const haveId = favArray.some(({ trackId }) => trackId === music.trackId);
     this.setState({ loading: true });
 
     if (haveId) {
       await removeSong(music);
-      favArray = favArray.filter((id) => id !== music.trackId);
+      favArray = favArray.filter(({ trackId }) => trackId !== music.trackId);
     } else {
       await addSong(music);
-      favArray.push(music.trackId);
+      favArray = [...favMusics, music];
     }
     this.setState({ loading: false, favMusics: favArray });
   }
@@ -54,9 +55,19 @@ class Album extends Component {
     });
   }
 
+  renderFavoritesSongs = () => {
+    this.setState({
+      loading: true }, async () => {
+      const fav = await getFavoriteSongs();
+      this.setState({ favMusics: fav, loading: false });
+    });
+  }
+
   render() {
-    const { musicList, loading,
-      artistInfo: { artworkUrl100, collectionName, artistName }, favMusics } = this.state;
+    const { musicList,
+      loading,
+      artistInfo: { artworkUrl100, collectionName, artistName },
+      favMusics } = this.state;
 
     return (
       <>
@@ -75,7 +86,9 @@ class Album extends Component {
                   .map((music) => (<MusicCard
                     key={ music.trackId }
                     musicList={ music }
-                    isChecked={ favMusics.some((id) => id === music.trackId) }
+                    isChecked={ favMusics.some(
+                      ({ trackId }) => trackId === music.trackId,
+                    ) }
                     handleChange={ () => this.handleChange(music) }
                   />))
               }
