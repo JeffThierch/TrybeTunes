@@ -49,10 +49,6 @@ class Search extends Component {
     return data;
   }
 
-  renderResultData = () => {
-
-  }
-
   render() {
     const { disabled, loading, result, searchInput } = this.state;
     return (

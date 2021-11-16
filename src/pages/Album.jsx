@@ -3,19 +3,40 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../components/MusicCard';
+import { addSong, removeSong } from '../services/favoriteSongsAPI';
 
 class Album extends Component {
   constructor() {
     super();
+
+    this.handleChange = this.handleChange.bind(this);
+
     this.state = {
       musicList: [],
       artistInfo: {},
+      favMusics: [],
       loading: false,
     };
   }
 
   componentDidMount() {
     this.fetchMusic();
+  }
+
+  async handleChange(music) {
+    const { favMusics } = this.state;
+    let favArray = [...favMusics];
+    const haveId = favArray.some((id) => id === music.trackId);
+    this.setState({ loading: true });
+
+    if (haveId) {
+      await removeSong(music);
+      favArray = favArray.filter((id) => id !== music.trackId);
+    } else {
+      await addSong(music);
+      favArray.push(music.trackId);
+    }
+    this.setState({ loading: false, favMusics: favArray });
   }
 
   fetchMusic = async () => {
@@ -35,27 +56,34 @@ class Album extends Component {
 
   render() {
     const { musicList, loading,
-      artistInfo: { artworkUrl100, collectionName, artistName } } = this.state;
+      artistInfo: { artworkUrl100, collectionName, artistName }, favMusics } = this.state;
 
-    if (loading) {
-      return <p>Carregando...</p>;
-    }
     return (
-      <div data-testid="page-album">
+      <>
         <Header />
+        <div data-testid="page-album">
+          {loading ? <p>Carregando...</p> : (
+            <>
+              <section>
+                <img src={ artworkUrl100 } alt={ collectionName } />
+                <h2 data-testid="album-name">{collectionName}</h2>
+                <p data-testid="artist-name">{artistName}</p>
+              </section>
 
-        <section>
-          <img src={ artworkUrl100 } alt={ collectionName } />
-          <h2 data-testid="album-name">{collectionName}</h2>
-          <p data-testid="artist-name">{artistName}</p>
-        </section>
+              {
+                musicList.filter(({ kind }) => kind === 'song')
+                  .map((music) => (<MusicCard
+                    key={ music.trackId }
+                    musicList={ music }
+                    isChecked={ favMusics.some((id) => id === music.trackId) }
+                    handleChange={ () => this.handleChange(music) }
+                  />))
+              }
+            </>
 
-        {
-          musicList.filter(({ kind }) => kind === 'song')
-            .map((music) => <MusicCard key={ music.trackId } musicList={ music } />)
-        }
-
-      </div>
+          )}
+        </div>
+      </>
     );
   }
 }
