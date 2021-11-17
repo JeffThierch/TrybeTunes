@@ -7,7 +7,7 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
+      loading: true,
       userInfo: {},
     };
   }
@@ -17,19 +17,17 @@ class Profile extends Component {
   }
 
   getUsersInfo = async () => {
-    this.setState({ loading: true }, async () => {
-      const userInfo = await getUser();
-      this.setState({ userInfo, loading: false });
-    });
+    const userInfo = await getUser();
+    this.setState({ userInfo, loading: false });
   }
 
   render() {
     const { loading, userInfo: { description, email, image, name } } = this.state;
     return (
-      <div data-testid="page-profile">
+      <>
         <Header />
         {loading ? <p>Carregando...</p> : (
-          <>
+          <div data-testid="page-profile">
             <section>
               <img data-testid="profile-image" src={ image } alt="User Img" />
               <div>
@@ -48,9 +46,9 @@ class Profile extends Component {
               </div>
             </section>
             <Link to="/profile/edit">Editar perfil</Link>
-          </>
+          </div>
         )}
-      </div>
+      </>
     );
   }
 }
