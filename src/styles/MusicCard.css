@@ -1,0 +1,38 @@
+.audio-title {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.audio-container {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.audio-player {
+  margin-right: 10px;
+  padding: 10px;
+}
+
+.fav-checkbox-input {
+  display: none;
+}
+
+.fav-checked {
+  color: red;
+  height: 3rem;
+  transition: all 0.3s ease;
+  width: 2rem;
+}
+
+.fav-not-checked {
+  height: 3rem;
+  transition: all 0.3s ease;
+  width: 2rem;
+}
+
+.fav-checked:hover, .fav-not-checked:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+

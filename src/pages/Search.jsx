@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import Loading from '../components/Loading';
 import searchAlbumsAPIs from '../services/searchAlbumsAPI';
+import '../styles/Search.css';
 
 class Search extends Component {
   constructor() {
@@ -35,18 +37,30 @@ class Search extends Component {
   }
 
   requestAPI = async () => {
-    const { searchInput } = this.state;
-    this.setState({
-      loading: true,
-    }, async () => {
-      const data = await searchAlbumsAPIs(searchInput);
+    try {
+      const { searchInput } = this.state;
       this.setState({
-        loading: false,
-        result: data,
+        loading: true,
+      }, async () => {
+        const data = await searchAlbumsAPIs(searchInput);
+        this.setState({
+          loading: false,
+          result: data,
+        });
       });
-    });
-    const data = await searchAlbumsAPIs(searchInput);
-    return data;
+      const data = await searchAlbumsAPIs(searchInput);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  turnEachWordCapitalize = (string) => {
+    if (string.length > 0 && string !== undefined) {
+      const words = string.trim().split(' ');
+      return words.map((word) => word[0].toUpperCase() + word.substring(1)).join(' ');
+    }
+    return '';
   }
 
   render() {
@@ -56,8 +70,8 @@ class Search extends Component {
         <Header />
 
         <div data-testid="page-search">
-          {loading ? <p>Carregando...</p> : (
-            <>
+          {loading ? <Loading /> : (
+            <div className="search-input-container">
               <input
                 type="text"
                 onChange={ this.handleChange }
@@ -73,33 +87,39 @@ class Search extends Component {
                 Pesquisar
 
               </button>
-            </>
+
+            </div>
           )}
           {(!result) ? '' : (
             <>
 
-              {!result.length ? <h1>Nenhum álbum foi encontrado</h1> : (
-                <h1>{`Resultado de álbuns de: ${searchInput}`}</h1>
+              {!result.length ? (
+                <h1 className="search-result">Nenhum álbum foi encontrado</h1>
+              ) : (
+                <h1 className="search-result">
+                  {`Resultado de álbuns de: ${
+                    this.turnEachWordCapitalize(searchInput)
+                  }`}
+                </h1>
               )}
-
-              {result.map((
-                { artistName, artworkUrl100, collectionName, collectionId },
-              ) => (
-
-                <div key={ collectionName }>
-                  <img src={ artworkUrl100 } alt={ `Album ${collectionName}` } />
-                  <p>{collectionName}</p>
-                  <h4>{artistName}</h4>
+              <section className="albuns-container">
+                {result.map((
+                  { artistName, artworkUrl100, collectionName, collectionId },
+                ) => (
                   <Link
+                    key={ collectionName }
                     data-testid={ `link-to-album-${collectionId}` }
                     to={ `/album/${collectionId}` }
                   >
-                    Detalhes
+                    <section className="album">
+                      <h4>{artistName}</h4>
+                      <img src={ artworkUrl100 } alt={ `Album ${collectionName}` } />
+                      <p>{collectionName}</p>
+                    </section>
                   </Link>
-                </div>
 
-              ))}
-
+                ))}
+              </section>
             </>
           )}
         </div>

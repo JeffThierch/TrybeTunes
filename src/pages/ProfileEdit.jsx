@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
+import Loading from '../components/Loading';
 import { getUser, updateUser } from '../services/userAPI';
+import '../styles/ProfileEdit.css';
 
 class ProfileEdit extends Component {
   constructor() {
@@ -69,63 +71,75 @@ class ProfileEdit extends Component {
     return (
       <>
         <Header />
-        <div data-testid="page-profile-edit">
-          {loading ? <p>Carregando...</p> : (
+        <div data-testid="page-profile-edit" className="page-container">
+          {loading ? <Loading /> : (
             <>
-              <form>
-                <label htmlFor="name-input">
-                  Name:
-                  <input
-                    data-testid="edit-input-name"
-                    type="text"
-                    value={ name }
-                    name="name"
-                    onChange={ this.handleChange }
-                    id="name-input"
-                  />
-                </label>
-                <label htmlFor="email-input">
-                  Email:
-                  <input
-                    data-testid="edit-input-email"
-                    type="email"
-                    value={ email }
-                    name="email"
-                    onChange={ this.handleChange }
-                    id="email-input"
-                  />
-                </label>
-                <label htmlFor="description-input">
-                  Description:
-                  <input
-                    data-testid="edit-input-description"
-                    type="text"
-                    value={ description }
-                    name="description"
-                    onChange={ this.handleChange }
-                    id="description-input"
-                  />
-                </label>
-                <label htmlFor="image-input">
-                  Image:
-                  <input
-                    data-testid="edit-input-image"
-                    type="text"
-                    value={ image }
-                    name="image"
-                    onChange={ this.handleChange }
-                    id="image-input"
-                  />
-                </label>
+              <form className="profile-edit-form">
+                <div>
+                  <label htmlFor="name-input" className="form-user-label">
+                    Name:
+                    <input
+                      data-testid="edit-input-name"
+                      className="form-user-input"
+                      type="text"
+                      value={ name }
+                      name="name"
+                      onChange={ this.handleChange }
+                      id="name-input"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label htmlFor="email-input" className="form-user-label">
+                    Email:
+                    <input
+                      data-testid="edit-input-email"
+                      className="form-user-input"
+                      type="email"
+                      value={ email }
+                      name="email"
+                      onChange={ this.handleChange }
+                      id="email-input"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label htmlFor="description-input" className="form-user-label">
+                    Description:
+                    <input
+                      data-testid="edit-input-description"
+                      className="form-user-input"
+                      type="text"
+                      value={ description }
+                      name="description"
+                      onChange={ this.handleChange }
+                      id="description-input"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <label htmlFor="image-input" className="form-user-label">
+                    Image:
+                    <input
+                      className="form-user-input"
+                      data-testid="edit-input-image"
+                      type="text"
+                      value={ image }
+                      name="image"
+                      onChange={ this.handleChange }
+                      id="image-input"
+                    />
+                  </label>
+                </div>
               </form>
               <button
                 type="button"
                 data-testid="edit-button-save"
+                className="save-btn"
                 disabled={ isDisable }
                 onClick={ this.attUserInfos }
               >
                 Salvar
-
               </button>
             </>
           )}

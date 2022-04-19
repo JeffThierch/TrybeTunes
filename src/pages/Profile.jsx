@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import Loading from '../components/Loading';
 import { getUser } from '../services/userAPI';
+import '../styles/Profile.css';
 
 class Profile extends Component {
   constructor(props) {
@@ -26,10 +28,15 @@ class Profile extends Component {
     return (
       <>
         <Header />
-        {loading ? <p>Carregando...</p> : (
-          <div data-testid="page-profile">
-            <section>
-              <img data-testid="profile-image" src={ image } alt="User Img" />
+        {loading ? <Loading /> : (
+          <div data-testid="page-profile" className="page-container">
+            <section className="profile-container">
+              <img
+                className="user-img"
+                data-testid="profile-image"
+                src={ image }
+                alt="User Img"
+              />
               <div>
                 <label htmlFor="user-description">
                   Descricao:
@@ -45,7 +52,7 @@ class Profile extends Component {
                 </label>
               </div>
             </section>
-            <Link to="/profile/edit">Editar perfil</Link>
+            <Link className="edit-link" to="/profile/edit">Editar perfil</Link>
           </div>
         )}
       </>

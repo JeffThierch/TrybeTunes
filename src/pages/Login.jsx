@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import Input from '../components/Input';
+import Loading from '../components/Loading';
 import { createUser } from '../services/userAPI';
+import '../styles/Login.css';
 
 class Login extends Component {
   constructor() {
@@ -9,18 +11,19 @@ class Login extends Component {
     this.state = {
       submitButtonDisable: true,
       username: '',
+      email: '',
       loading: false,
       userWasCreated: false,
     };
   }
 
   handleInputChange = ({ target }) => {
-    const { value } = target;
+    const { value, name } = target;
     const minNameLength = 3;
     if (value.length >= minNameLength) {
       this.setState({
         submitButtonDisable: false,
-        username: value,
+        [name]: value,
       });
     } else {
       this.setState({
@@ -31,11 +34,11 @@ class Login extends Component {
   }
 
   handleBtnClick = async () => {
-    const { username } = this.state;
+    const { username, email } = this.state;
     this.setState({
       loading: true,
     }, async () => {
-      await createUser({ name: username });
+      await createUser({ name: username, email });
       this.setState({
         loading: false,
         userWasCreated: true,
@@ -47,29 +50,47 @@ class Login extends Component {
   render() {
     const { submitButtonDisable, loading, userWasCreated } = this.state;
     if (loading) {
-      return <p>Carregando...</p>;
+      return <Loading />;
     }
     if (userWasCreated) {
       return <Redirect to="/search" />;
     }
     return (
-      <div data-testid="page-login">
-        <Input
-          id="login-name-input"
-          handleChange={ this.handleInputChange }
-          type="text"
-          placeholder="Insira seu nome"
-          label="Nome"
-        />
-        <button
-          type="button"
-          data-testid="login-submit-button"
-          disabled={ submitButtonDisable }
-          onClick={ this.handleBtnClick }
-        >
-          Entrar
+      <div data-testid="page-login" className="login-page">
+        <div className="login-container">
+          <div className="user-info-container">
+            <Input
+              id="login-name-input"
+              name="username"
+              handleChange={ this.handleInputChange }
+              type="text"
+              placeholder="Nome"
+              label=""
+              className="login-input"
+            />
+            <Input
+              id="login-email-input"
+              name="email"
+              handleChange={ this.handleInputChange }
+              type="text"
+              placeholder="Email"
+              label=""
+              className="login-input email-input"
+            />
 
-        </button>
+          </div>
+          <button
+            type="button"
+            className="login-btn"
+            data-testid="login-submit-button"
+            disabled={ submitButtonDisable }
+            onClick={ this.handleBtnClick }
+          >
+            Entrar
+
+          </button>
+
+        </div>
       </div>
     );
   }

@@ -1,0 +1,24 @@
+.artist-info-container {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.album-img {
+  height: 9rem;
+}
+
+.album-name {
+  margin-bottom: 0;
+}
+
+.artist-name {
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.musics-container {
+  margin-bottom: 2rem;
+}

@@ -1,28 +1,40 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import '../styles/MusicCard.css';
 
 export default class MusicCard extends Component {
   render() {
     const { musicList, handleChange, isChecked } = this.props;
     const { trackName, previewUrl, trackId } = musicList;
     return (
-      <section>
-        <h3>{trackName}</h3>
-        <audio data-testid="audio-component" src={ previewUrl } controls>
-          <track kind="captions" />
-          O seu navegador não suporta o elemento
-          <code>audio</code>
-        </audio>
-        <label htmlFor="fav-checkbox">
-          <input
-            type="checkbox"
-            data-testid={ `checkbox-music-${trackId}` }
-            id="fav-checkbox"
-            onChange={ handleChange }
-            checked={ isChecked }
-          />
-          Favorita
-        </label>
+      <section className="music-container">
+        <h3 className="audio-title">{trackName}</h3>
+        <div className="audio-container">
+          <audio
+            data-testid="audio-component"
+            src={ previewUrl }
+            controls
+            className="audio-player"
+          >
+            <track kind="captions" />
+            O seu navegador não suporta o elemento
+            <code>audio</code>
+          </audio>
+          <label htmlFor={ trackId }>
+            <input
+              type="checkbox"
+              className="fav-checkbox-input"
+              data-testid={ `checkbox-music-${trackId}` }
+              id={ trackId }
+              value={ musicList }
+              onChange={ () => handleChange(musicList) }
+              checked={ isChecked }
+            />
+            {isChecked ? (<FaHeart className="fav-checked" />) : (
+              <FaRegHeart className="fav-not-checked" />)}
+          </label>
+        </div>
       </section>
     );
   }
